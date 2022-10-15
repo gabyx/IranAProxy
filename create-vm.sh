@@ -65,4 +65,6 @@ echo "Copy setup scripts to VM"
 gcloud compute scp --ssh-key-file "$sshFile" "./src/setup-proxy.sh" "$VM_NAME:"~/setup-proxy.sh
 
 gcloud compute ssh --ssh-key-file "$sshFile" \
-    --command 'bash ~/setup-proxy.sh' "$VM_NAME"
+    --command "bash ~/setup-proxy.sh '$PROXY_DOMAIN'" "$VM_NAME"
+
+echo "Your Signal Proxy is running at $externalIP. Share this with: https://signal.tube/#$PROXY_DOMAIN"
