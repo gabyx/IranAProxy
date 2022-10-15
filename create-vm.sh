@@ -37,9 +37,12 @@ if ! isVMRunning; then
         gcloud compute addresses create "$VM_NAME-ip" \
             --region "$VM_REGION"
     fi
+
     externalIP=$(gcloud compute addresses describe --region "$VM_REGION" "$VM_NAME-ip" --format='get(address)')
     echo "External  IP '$externalIP'"
+fi
 
+if ! isVMRunning; then
     echo "Create VM '$VM_NAME'."
     gcloud compute instances create "$VM_NAME" \
         --project=iranaproxy \
@@ -66,5 +69,8 @@ gcloud compute scp --ssh-key-file "$sshFile" "./src/setup-proxy.sh" "$VM_NAME:"~
 
 gcloud compute ssh --ssh-key-file "$sshFile" \
     --command "bash ~/setup-proxy.sh '$PROXY_DOMAIN'" "$VM_NAME"
+
+formatArg="get(networkInterfaces[0].accessConfigs[0].natIP)"
+externalIP=$(gcloud compute instances describe "$VM_NAME" --format "$formatArg")
 
 echo "Your Signal Proxy is running at $externalIP. Share this with: https://signal.tube/#$PROXY_DOMAIN"
