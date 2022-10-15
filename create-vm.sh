@@ -16,7 +16,8 @@ function isVMRunning() {
 cd "$DIR"
 
 echo "Source env file."
-. $DIR/.env
+. $DIR/.env || die "Create a '.env' file from the template '.env.tmpl'"
+
 delete=false && [ "${1:-}" = "--delete" ] && delete="true"
 
 gcloud config set project "$GCP_PROJECT_NAME"
@@ -65,8 +66,3 @@ gcloud compute scp --ssh-key-file "$sshFile" "./src/setup-proxy.sh" "$VM_NAME:"~
 
 gcloud compute ssh --ssh-key-file "$sshFile" \
     --command 'bash ~/setup-proxy.sh' "$VM_NAME"
-
-formatArg="get(networkInterfaces[0].accessConfigs[0].natIP)"
-externalIp=$(gcloud compute instances describe "$VM_NAME" --format "$formatArg")
-
-echo "Your Signal Proxy is running. Share this with: https://signal.tube/#$externalIp"

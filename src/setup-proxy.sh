@@ -29,7 +29,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plu
 if [ ! -d "Signal-TLS-Proxy" ]; then
   git clone https://github.com/signalapp/Signal-TLS-Proxy.git ~/Signal-TLS-Proxy
   cd ~/Signal-TLS-Proxy
-  sudo ./init-certificate.sh
+  echo -e "$PROXY_DOMAIN\ny\n" | sudo ./init-certificate.sh
   sudo docker-compose up --detach
 else
   cd ~/Signal-TLS-Proxy
